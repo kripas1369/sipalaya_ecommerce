@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sipalaya_ecommerce/core/network/network_info.dart';
+import 'package:sipalaya_ecommerce/presentation/SecondaryScreen/HomeScreen/body.dart';
 import '../../../../../widgets/customTextfieldWidget.dart';
 import '../../../../../widgets/defaultButton.dart';
 import '../../LoginScreen/body.dart';
 import '../../Widgets/primaryText.dart';
 import '../../Widgets/sizeBox.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
+
 
 class RegisterTextfield extends StatefulWidget {
   const RegisterTextfield({super.key});
@@ -19,13 +23,22 @@ class _RegisterTextfieldState extends State<RegisterTextfield> {
   @override
   Widget build(BuildContext context) {
 
-    final TextEditingController emailController = TextEditingController(text:"kripask50@gmail.com");
+    final TextEditingController emailController = TextEditingController(text:"kripas@gmail.com");
     final TextEditingController passwordController = TextEditingController(text: "Flutter1234");
     final TextEditingController conformpasswordController = TextEditingController(text: "Flutter1234");
     final TextEditingController nameController = TextEditingController(text: "kripas");
     final TextEditingController numberController = TextEditingController(text: "9860486264");
     final formKey = GlobalKey<FormState>();
+
+
     final String registerUrl = "${ApiUrls.baseurl}api/user/register/";
+
+    Future<void> saveuserData (String email, String name, String phoneNumber) async{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('email', email);
+      prefs.setString('name', name);
+      prefs.setString('phonenumber', phoneNumber);
+    }
 
     Future<void> postData() async{
       Map<String, dynamic> requestBody = {
@@ -45,9 +58,14 @@ class _RegisterTextfieldState extends State<RegisterTextfield> {
         print("^^^^^^^^^^^^");
         print(response.body);
         print(jsonDecode(response.body)["msg"].toString());
+        saveuserData(
+            emailController.text.toString(),
+            nameController.text.toString(),
+            numberController.text.toString());
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         );
       }else{
         print("^^^^^^^^^^^^");
